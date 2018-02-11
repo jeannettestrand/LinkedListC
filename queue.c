@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "queue.h"
@@ -7,36 +6,31 @@
  * Returns:  pointer to the item if successful, NULL if not */
 ItemType * enqueue (Queue *queue, ItemType *item){  
    
-    // Allocate memory space for the property next of ListNode
-    struct listNode *next = malloc (sizeof(struct listNode));
-    if (next == NULL){
+    // Allocate memory space for the newNode
+    ListNode *newNode = malloc (sizeof(ListNode));
+    if (newNode == NULL){
         // If next is null, allocation failed, return NULL
         return NULL;
     }
+    newNode->item = item;
+    newNode->next = NULL;
     
-    // Initialize the new ListNode with next and item property pointers
-    ListNode newNode = {next, item};
-    printf("new node mem addr: %x\n", &newNode); 
-    printf("new node.next mem addr: %x\n", &newNode.next);
-    printf("new nodenext value: %x\n", newNode->next);
-    printf("new nodeitem mem addr: %x\n", &newNode.item);
-    printf("new nodenext value: %x\n", newNode->next);
-    
-    
-    
-    // If q not empty, point rear.next at newNode memory Address
-    if (queue->rear != NULL){         
-        queue->rear->next = &newNode;     
-    }   
-    // Point the queue.rear at newNode memory Address
-    queue->rear = &newNode; 
     // If q is Empty, point front at newNode memory Address
+    // otherwise, it is attached to the end of the queue
     if (queue->front == NULL){
-        queue->front = &newNode;
+      queue->front = newNode;
+    } else {
+      queue->rear->next = newNode;
     }
+
+    // Always point the queue.rear at newNode memory Address
+    queue->rear = newNode; 
+
     // Increment size property
     queue->size++;  
-    return newNode.item;                   
+
+    // Return item
+    return item;                   
 }
 
 /* Removes an item from the front of the queue.
@@ -46,11 +40,17 @@ ItemType * dequeue (Queue *queue) {
     if (queue->front == NULL) {
         return NULL;
     }
-    // Retrieve and save item to remove and return (main frees space)
+    // Retrieve and save item forreturn from function
     ItemType *oldNode = queue->front->item;   
     
+    // Set up a pointer to the ListNode to be returned to the heap - release from memory
+    ListNode *removeNode = queue->front;
+    
     // Point front at
-    queue->front = queue->front->next;       
+    queue->front = queue->front->next; 
+    
+    free(removeNode);
+    
     queue->size--;                        
     return oldNode;                        
 }
@@ -70,6 +70,3 @@ void printQueue (const Queue queue, FILE *stream) {
         struct listNode *curr = curr->next;
     }
 }
-
-    
-
