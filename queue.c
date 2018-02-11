@@ -62,11 +62,9 @@ int queueSize (const Queue queue) {
 
 /* Print the contents of the queue to the specified stream */
 void printQueue (const Queue queue, FILE *stream) {
-    ListNode *curr = queue.front;
-    fprintf(stream, "starting the print");
-    fprintf(stream, "%d", queue.front->item);
-    while (curr->next != NULL) {
-        fprintf(stream, "%d", curr->item);
-        struct listNode *curr = curr->next;
+    struct listNode *next = queue.front;
+    while (next != NULL) {
+        fprintf(stream, "%d\n", *next->item);
+        next = next->next;
     }
 }
