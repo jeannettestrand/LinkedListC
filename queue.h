@@ -15,6 +15,7 @@ typedef int ItemType;
 // A node for a singly-linked list
 typedef struct listNode {
     struct listNode *next;
+    struct listNode *previous;
     ItemType *item;
 } ListNode;
 
@@ -25,9 +26,11 @@ typedef struct {
     int size; // Number of items currently in the queue
 } Queue;
 
-ItemType * enqueue (Queue *queue, ItemType *item);
+ItemType * enqueueFront (Queue *queue, ItemType *item);
+ItemType * enqueueRear (Queue *queue, ItemType *item);
 
-ItemType * dequeue (Queue *queue);
+ItemType * dequeueFront (Queue *queue);
+ItemType * dequeueRear (Queue *queue);
 
 int queueSize (const Queue queue);
 

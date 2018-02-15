@@ -10,25 +10,56 @@ int main(int ac, char *av[]) {
     while (!done) {
         int choice, nValid;
         do {
-            printf("Enter 1 to add to queue or 0 to remove "
+            printf("REAR - 0 to remove, 1 to add\nFRONT - 2 to add, 3 to remove\n"
                     "(-1 to quit): ");
             nValid = scanf("%d", &choice);
-        } while (nValid != 1 || choice < -1 || choice > 1);
+        } while (nValid != 1 || choice < -1 || choice > 3);
 
         switch (choice) {
             case 0:
             {
                 ItemType *item;
-                if ((item = dequeue(&queue)) != NULL) {
+                if ((item = dequeueRear(&queue)) != NULL) {
                     printf("Removed " ITEM_FORMAT "\n", *item);
+                    printf ("Items remaining in the queue:\n");
+                printQueue (queue, stdout);
 		    free (item);
                 } else {
                     printf("Queue is empty\n");
                 }
+                
+
                 break;
             }
 
             case 1:
+            {
+                ItemType *item = malloc (sizeof(ItemType));
+                if (item == NULL) {
+                    fprintf(stderr, "%s: Error allocating memory for item.\n", av[0]);
+                    printf ("Items remaining in the queue:\n");
+                    printQueue (queue, stdout);
+                    return EXIT_FAILURE;
+                }
+
+                printf ("Enter " ITEM_PROMPT ": ");
+                if (scanf(ITEM_FORMAT, item) != 1) {
+                    fprintf(stderr, "Unable to read " ITEM_PROMPT "\n");
+                    break;
+                }
+
+                if ((item = enqueueRear(&queue, item)) != NULL) {
+                    printf("Added " ITEM_FORMAT "\n", *item);
+                } else {
+                    fprintf(stderr, "%s: Error allocating memory to queue.\n", av[0]);
+                    return EXIT_FAILURE;
+                }
+                
+
+                break;
+            }
+
+            case 2:
             {
                 ItemType *item = malloc (sizeof(ItemType));
                 if (item == NULL) {
@@ -42,15 +73,35 @@ int main(int ac, char *av[]) {
                     break;
                 }
 
-                if ((item = enqueue(&queue, item)) != NULL) {
+                if ((item = enqueueFront(&queue, item)) != NULL) {
                     printf("Added " ITEM_FORMAT "\n", *item);
+                    printf ("Items remaining in the queue:\n");
+                    printQueue (queue, stdout);
                 } else {
                     fprintf(stderr, "%s: Error allocating memory to queue.\n", av[0]);
                     return EXIT_FAILURE;
                 }
+                
+
                 break;
             }
+            
+            case 3:
+            {
+                 ItemType *item;
+                if ((item = dequeueFront(&queue)) != NULL) {
+                    printf("Removed " ITEM_FORMAT "\n", *item);
+		    free (item);
+                    printf ("Items remaining in the queue:\n");
+                printQueue (queue, stdout);
+                } else {
+                    printf("Queue is empty\n");
+                }
+                break;
+                
 
+            }
+            
             case -1:
             {
                 done = 1;

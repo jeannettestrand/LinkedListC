@@ -4,55 +4,102 @@
 
 /* Add an item to the rear of the dynamically-allocated queue.
  * Returns:  pointer to the item if successful, NULL if not */
-ItemType * enqueue (Queue *queue, ItemType *item){  
+ItemType * enqueueRear (Queue *queue, ItemType *item){  
    
-    // Allocate memory space for the newNode
+    // Allocate memory space for the newNode, initialize properties
     ListNode *newNode = malloc (sizeof(ListNode));
     if (newNode == NULL){
-        // If next is null, allocation failed, return NULL
         return NULL;
     }
     newNode->item = item;
     newNode->next = NULL;
+    newNode->previous = NULL;
     
-    // If q is Empty, point front at newNode memory Address
-    // otherwise, it is attached to the end of the queue
+    // Attach node to queue structure
     if (queue->front == NULL){
-      queue->front = newNode;
+        queue->front = newNode;
     } else {
-      queue->rear->next = newNode;
+        newNode->previous = queue->rear;
+        queue->rear->next = newNode;
     }
-
-    // Always point the queue.rear at newNode memory Address
     queue->rear = newNode; 
 
-    // Increment size property
     queue->size++;  
-
-    // Return item
+    return item;                   
+}
+ItemType * enqueueFront (Queue *queue, ItemType *item){  
+   
+    // Allocate memory space for the newNode, initialize properties
+    ListNode *newNode = malloc (sizeof(ListNode));
+    if (newNode == NULL){
+        return NULL;
+    }
+    newNode->item = item;
+    newNode->next = NULL;
+    newNode->previous = NULL;
+    
+    // Attach node to queue structure
+    if (queue->front == NULL){
+        queue->rear = newNode;
+    } else {
+        newNode->next = queue->front;
+        queue->front->previous = newNode;
+    }
+    queue->front = newNode; 
+    
+    queue->size++;  
     return item;                   
 }
 
+
 /* Removes an item from the front of the queue.
  * Returns:  pointer to the item if successful, NULL if empty */
-ItemType * dequeue (Queue *queue) {
+ItemType * dequeueFront (Queue *queue) {
+
+    if (queue->front == NULL) {
+        return NULL;
+    }
+    // Remember item and node for memory release
+    ItemType *item = queue->front->item;   
+    ListNode *removeNode = queue->front;
+    
+    // Detach Node from Queue Structure
+    if (queue->size == 1){
+        queue->front = NULL;
+        queue->rear = NULL;
+    }else {
+        queue->front = queue->front->next;
+        queue->front->previous = NULL;
+    }    
+    
+    //Release from memory, and complete queue mgmt
+    free(removeNode);
+    queue->size--;                        
+    return item;                        
+}
+ItemType * dequeueRear (Queue *queue) {
     // If q is empty, return Null
     if (queue->front == NULL) {
         return NULL;
     }
-    // Retrieve and save item forreturn from function
-    ItemType *oldNode = queue->front->item;   
+    // Remember item and node for memory release
+    ItemType *item = queue->rear->item;   
+    ListNode *removeNode = queue->rear;
     
-    // Set up a pointer to the ListNode to be returned to the heap - release from memory
-    ListNode *removeNode = queue->front;
+    // Detach node from Queue structure
+    printf("%d", queue->size);
+    if (queue->size == 1) {
+        queue->rear = NULL;
+        queue->front = NULL;
+    } else {
+        queue->rear = queue->rear->previous;
+        queue->rear->next = NULL;
+    }
     
-    // Point front at
-    queue->front = queue->front->next; 
-    
+    //Release from memory, and complete queue mgmt
     free(removeNode);
-    
     queue->size--;                        
-    return oldNode;                        
+    return item;                        
 }
 
 /* Returns:  number of items in the queue */
@@ -64,7 +111,7 @@ int queueSize (const Queue queue) {
 void printQueue (const Queue queue, FILE *stream) {
     struct listNode *next = queue.front;
     while (next != NULL) {
-        fprintf(stream, "%d\n", *next->item);
+        fprintf(stream, "%d\n", *next->item);   
         next = next->next;
     }
 }
