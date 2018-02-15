@@ -21,8 +21,6 @@ int main(int ac, char *av[]) {
                 ItemType *item;
                 if ((item = dequeueRear(&queue)) != NULL) {
                     printf("Removed " ITEM_FORMAT "\n", *item);
-                    printf ("Items remaining in the queue:\n");
-                printQueue (queue, stdout);
 		    free (item);
                 } else {
                     printf("Queue is empty\n");
@@ -37,8 +35,6 @@ int main(int ac, char *av[]) {
                 ItemType *item = malloc (sizeof(ItemType));
                 if (item == NULL) {
                     fprintf(stderr, "%s: Error allocating memory for item.\n", av[0]);
-                    printf ("Items remaining in the queue:\n");
-                    printQueue (queue, stdout);
                     return EXIT_FAILURE;
                 }
 
@@ -92,8 +88,6 @@ int main(int ac, char *av[]) {
                 if ((item = dequeueFront(&queue)) != NULL) {
                     printf("Removed " ITEM_FORMAT "\n", *item);
 		    free (item);
-                    printf ("Items remaining in the queue:\n");
-                printQueue (queue, stdout);
                 } else {
                     printf("Queue is empty\n");
                 }
